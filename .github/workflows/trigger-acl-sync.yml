@@ -1,0 +1,23 @@
+name: Trigger ACL Sync
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - "meta-dev.yml"
+      - "meta-prod.yml"
+
+jobs:
+  trigger-acl-sync:
+    runs-on: telnyx-small
+    steps:
+      - name: Trigger ACL Sync
+        env:
+          GH_TOKEN: ${{ secrets.ITOPS_GITHUB_OWNER_SYNC }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/team-telnyx/itops-svc-github-repo-acl/dispatches \
+            -f event_type='acl-sync'
